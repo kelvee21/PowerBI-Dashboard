@@ -1,0 +1,27 @@
+﻿
+_archive/
+
+# Power BI project local files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Private study materials
+study-materials/
+local-pages.json
+
+# Private project guides
+docs/build-guide.md
+docs/dimensional-modeling-guide.md
+docs/issues-and-fixes.md
+docs/model-overview.md
+docs/transformation-walkthrough.md
+docs/update-existing-report.md
+index.html
+fixes.html
+update.html
+walkthrough.html
+report.html
+
+# Python
+__pycache__/
+*.pyc
