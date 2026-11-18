@@ -1,0 +1,141 @@
+LearnerKey,LearnerName,Email,Track,Cohort,CohortTrackKey,CertificationType,GraduationStatus,CertificationStatus,ProgramStatus,AttendedClassDays,ScheduledClassDays,AttendanceCompletion,LastAttendedDate,LastScheduledDate,HasIncompleteAttendance,IsDropout,DropoutStatus
+2024|Power BI|emilyjohnson@example.com,Emily Johnson,emilyjohnson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lucasanderson@example.com,Lucas Anderson,lucasanderson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|benjaminharris@example.com,Benjamin Harris,benjaminharris@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|isabellamoore@example.com,Isabella Moore,isabellamoore@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jamescarter@example.com,James Carter,jamescarter@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|oliviamartin@example.com,Olivia Martin,oliviamartin@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|alexanderwright@example.com,Alexander Wright,alexanderwright@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|sophialewis@example.com,Sophia Lewis,sophialewis@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|michaelscott@example.com,Michael Scott,michaelscott@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|ameliaclark@example.com,Amelia Clark,ameliaclark@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|noahrobinson@example.com,Noah Robinson,noahrobinson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|gracerodriguez@example.com,Grace Rodriguez,gracerodriguez@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|elijahturner@example.com,Elijah Turner,elijahturner@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|avamitchell@example.com,Ava Mitchell,avamitchell@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|williamcooper@example.com,William Cooper,williamcooper@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|charlottehill@example.com,Charlotte Hill,charlottehill@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|henryadams@example.com,Henry Adams,henryadams@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|evelynbaker@example.com,Evelyn Baker,evelynbaker@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|samuelcollins@example.com,Samuel Collins,samuelcollins@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|miaallen@example.com,Mia Allen,miaallen@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|danielbennett@example.com,Daniel Bennett,danielbennett@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|harperparker@example.com,Harper Parker,harperparker@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jacobyoung@example.com,Jacob Young,jacobyoung@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lilyward@example.com,Lily Ward,lilyward@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|matthewfoster@example.com,Matthew Foster,matthewfoster@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|abigailbrooks@example.com,Abigail Brooks,abigailbrooks@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|josephgriffin@example.com,Joseph Griffin,josephgriffin@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|ellareed@example.com,Ella Reed,ellareed@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|davidflores@example.com,David Flores,davidflores@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|chloehoward@example.com,Chloe Howard,chloehoward@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|andrewstewart@example.com,Andrew Stewart,andrewstewart@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|victoriaking@example.com,Victoria King,victoriaking@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|thomasphillips@example.com,Thomas Phillips,thomasphillips@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|hannahbutler@example.com,Hannah Butler,hannahbutler@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|christophermorgan@example.com,Christopher Morgan,christophermorgan@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|arialee@example.com,Aria Lee,arialee@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|anthonybell@example.com,Anthony Bell,anthonybell@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|nataliesanders@example.com,Natalie Sanders,nataliesanders@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|joshuamorris@example.com,Joshua Morris,joshuamorris@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|scarlettrivera@example.com,Scarlett Rivera,scarlettrivera@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jonathanperry@example.com,Jonathan Perry,jonathanperry@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|penelopecook@example.com,Penelope Cook,penelopecook@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|ryanpeterson@example.com,Ryan Peterson,ryanpeterson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|eleanorbarnes@example.com,Eleanor Barnes,eleanorbarnes@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|calebjenkins@example.com,Caleb Jenkins,calebjenkins@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|zoeyrussell@example.com,Zoey Russell,zoeyrussell@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jackmurphy@example.com,Jack Murphy,jackmurphy@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|madisonhayes@example.com,Madison Hayes,madisonhayes@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|charlescoleman@example.com,Charles Coleman,charlescoleman@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|laylacooper@example.com,Layla Cooper,laylacooper@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|ethankelly@example.com,Ethan Kelly,ethankelly@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|sofiarichardson@example.com,Sofia Richardson,sofiarichardson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|owencox@example.com,Owen Cox,owencox@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|noraward@example.com,Nora Ward,noraward@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|isaacprice@example.com,Isaac Price,isaacprice@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|hazellong@example.com,Hazel Long,hazellong@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|dylanpowell@example.com,Dylan Powell,dylanpowell@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lillianfisher@example.com,Lillian Fisher,lillianfisher@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|christianhenderson@example.com,Christian Henderson,christianhenderson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|audreymyers@example.com,Audrey Myers,audreymyers@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lukebryant@example.com,Luke Bryant,lukebryant@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lucynguyen@example.com,Lucy Nguyen,lucynguyen@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|carterkim@example.com,Carter Kim,carterkim@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|samanthachavez@example.com,Samantha Chavez,samanthachavez@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|gabrieljenkins@example.com,Gabriel Jenkins,gabrieljenkins@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|bellamorales@example.com,Bella Morales,bellamorales@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|aaronhayes@example.com,Aaron Hayes,aaronhayes@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|mayaporter@example.com,Maya Porter,mayaporter@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|julianramirez@example.com,Julian Ramirez,julianramirez@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|rubyhunter@example.com,Ruby Hunter,rubyhunter@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|leoross@example.com,Leo Ross,leoross@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|sadiediaz@example.com,Sadie Diaz,sadiediaz@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|adamsimmons@example.com,Adam Simmons,adamsimmons@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|violetgray@example.com,Violet Gray,violetgray@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|nathanmitchell@example.com,Nathan Mitchell,nathanmitchell@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|stellaperry@example.com,Stella Perry,stellaperry@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|aidenrichardson@example.com,Aiden Richardson,aidenrichardson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|leahlopez@example.com,Leah Lopez,leahlopez@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|hunterbarnes@example.com,Hunter Barnes,hunterbarnes@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|milabrooks@example.com,Mila Brooks,milabrooks@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|sebastiancarter@example.com,Sebastian Carter,sebastiancarter@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|elliehughes@example.com,Ellie Hughes,elliehughes@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jacksonbennett@example.com,Jackson Bennett,jacksonbennett@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lunasanders@example.com,Luna Sanders,lunasanders@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|zacharyrogers@example.com,Zachary Rogers,zacharyrogers@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|naomiward@example.com,Naomi Ward,naomiward@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|liambrown@example.com,Liam Brown,liambrown@example.com,Power BI,2024,2024|Power BI,Power BI,Non Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|gabriellacruz@example.com,Gabriella Cruz,gabriellacruz@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|patrickreed@example.com,Patrick Reed,patrickreed@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|zoeylong@example.com,Zoey Long,zoeylong@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|calebscott@example.com,Caleb Scott,calebscott@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|harperthompson@example.com,Harper Thompson,harperthompson@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|blakecarter@example.com,Blake Carter,blakecarter@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|emilycoleman@example.com,Emily Coleman,emilycoleman@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|dominicmyers@example.com,Dominic Myers,dominicmyers@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|gracebell@example.com,Grace Bell,gracebell@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|isaacwright@example.com,Isaac Wright,isaacwright@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|lilyphillips@example.com,Lily Phillips,lilyphillips@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Not Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|jaydenstewart@example.com,Jayden Stewart,jaydenstewart@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|Power BI|charlotteallen@example.com,Charlotte Allen,charlotteallen@example.com,Power BI,2024,2024|Power BI,Power BI,Graduate,Certified,Completed,50,50,1.0,2024-10-11,2024-10-11,0,0,Not Dropout
+2024|AWS Cloud|james.williams@msc.com,James Williams,james.williams@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,42,50,0.84,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|sarah.johnson@msc.com,Sarah Johnson,sarah.johnson@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|michael.brown@msc.com,Michael Brown,michael.brown@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,41,50,0.82,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|emily.davis@msc.com,Emily Davis,emily.davis@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,41,50,0.82,2024-10-11,2024-10-11,1,1,Dropout
+2024|AWS Cloud|john.miller@msc.com,John Miller,john.miller@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,31,50,0.62,2024-10-11,2024-10-11,1,1,Dropout
+2024|AWS Cloud|olivia.garcia@msc.com,Olivia Garcia,olivia.garcia@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,37,50,0.74,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|david.martinez@msc.com,David Martinez,david.martinez@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,44,50,0.88,2024-10-10,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|emma.wilson@msc.com,Emma Wilson,emma.wilson@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,42,50,0.84,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|daniel.anderson@msc.com,Daniel Anderson,daniel.anderson@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,39,50,0.78,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|sophia.thomas@msc.com,Sophia Thomas,sophia.thomas@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,40,50,0.8,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|robert.taylor@msc.com,Robert Taylor,robert.taylor@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,40,50,0.8,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|mia.lee@msc.com,Mia Lee,mia.lee@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,40,50,0.8,2024-10-10,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|william.harris@msc.com,William Harris,william.harris@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,41,50,0.82,2024-10-11,2024-10-11,1,1,Dropout
+2024|AWS Cloud|isabella.clark@msc.com,Isabella Clark,isabella.clark@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,35,50,0.7,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|joseph.lewis@msc.com,Joseph Lewis,joseph.lewis@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,36,50,0.72,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|charlotte.robinson@msc.com,Charlotte Robinson,charlotte.robinson@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-09,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|benjamin.young@msc.com,Benjamin Young,benjamin.young@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,42,50,0.84,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|amelia.hall@msc.com,Amelia Hall,amelia.hall@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,43,50,0.86,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|samuel.king@msc.com,Samuel King,samuel.king@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,38,50,0.76,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|abigail.scott@msc.com,Abigail Scott,abigail.scott@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,40,50,0.8,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|alexander.green@msc.com,Alexander Green,alexander.green@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|harper.adams@msc.com,Harper Adams,harper.adams@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|christopher.baker@msc.com,Christopher Baker,christopher.baker@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,39,50,0.78,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|lily.gonzalez@msc.com,Lily Gonzalez,lily.gonzalez@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|matthew.nelson@msc.com,Matthew Nelson,matthew.nelson@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,43,50,0.86,2024-10-11,2024-10-11,1,1,Dropout
+2024|AWS Cloud|chloe.carter@msc.com,Chloe Carter,chloe.carter@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,42,50,0.84,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|anthony.mitchell@msc.com,Anthony Mitchell,anthony.mitchell@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,43,50,0.86,2024-10-10,2024-10-11,1,1,Dropout
+2024|AWS Cloud|grace.perez@msc.com,Grace Perez,grace.perez@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,37,50,0.74,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|joshua.moore@msc.com,Joshua Moore,joshua.moore@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,39,50,0.78,2024-10-09,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|ella.white@msc.com,Ella White,ella.white@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,41,50,0.82,2024-10-10,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|andrew.ramirez@msc.com,Andrew Ramirez,andrew.ramirez@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,42,50,0.84,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|zoe.walker@msc.com,Zoe Walker,zoe.walker@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,39,50,0.78,2024-10-11,2024-10-11,1,1,Dropout
+2024|AWS Cloud|nicholas.allen@msc.com,Nicholas Allen,nicholas.allen@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,32,50,0.64,2024-10-08,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|layla.rivera@msc.com,Layla Rivera,layla.rivera@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Not Certified,Completed,43,50,0.86,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|ryan.hill@msc.com,Ryan Hill,ryan.hill@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,39,50,0.78,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|hannah.wright@msc.com,Hannah Wright,hannah.wright@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,38,50,0.76,2024-10-10,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|justin.flores@msc.com,Justin Flores,justin.flores@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,39,50,0.78,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|natalie.collins@msc.com,Natalie Collins,natalie.collins@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Non Graduate,Not Certified,Completed,45,50,0.9,2024-10-10,2024-10-11,1,1,Dropout
+2024|AWS Cloud|ethan.edwards@msc.com,Ethan Edwards,ethan.edwards@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,45,50,0.9,2024-10-11,2024-10-11,1,0,Not Dropout
+2024|AWS Cloud|aria.turner@msc.com,Aria Turner,aria.turner@msc.com,AWS Cloud,2024,2024|AWS Cloud,AWS,Graduate,Certified,Completed,37,50,0.74,2024-10-10,2024-10-11,1,0,Not Dropout

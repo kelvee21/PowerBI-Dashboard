@@ -1,0 +1,161 @@
+-- =====================================================================================
+-- Dare Careers | Learner Progress — DAX measure library (Power BI Desktop 2.159+, Oct 2026)
+-- Home all measures in a dedicated measure table:
+--   Home > Enter data > name the table  _Measures  > Load, then hide its default column.
+-- Model: DimLearner (1)->(*) FactAttendance / FactParticipation / FactAssessment
+--        DimDate    (1)->(*) FactAttendance[Date] / FactParticipation[Date] / FactAssessment[AssessmentDate]
+--        DimDate    (1)->(*) ClassSchedule[Date]   (class days per cohort-track; hidden)
+-- Keys: LearnerKey = Cohort|Track|email, CohortTrackKey = Cohort|Track.
+-- All relationships one-to-many, single direction. Learner outcomes live on DimLearner.
+-- Expected values (whole cohort) are in comments so you can validate cards quickly.
+-- =====================================================================================
+
+
+-- ---------------------------------------------------------------- Learner population
+Total Learners =
+COUNTROWS ( DimLearner )                                   -- 140 (Power BI 100, AWS Cloud 40)
+
+-- Class days of the cohorts/tracks in context. ClassSchedule has no relationship to DimLearner
+-- (it is keyed by cohort-track, not by learner), so TREATAS passes the learner filter across.
+-- DimDate filters ClassSchedule through its relationship (Oct 2024 -> 9).
+Class Days =
+CALCULATE (
+    DISTINCTCOUNT ( ClassSchedule[Date] ),
+    TREATAS ( VALUES ( DimLearner[CohortTrackKey] ), ClassSchedule[CohortTrackKey] )
+)                                                          -- 50 (weekends are NOT class days)
+
+
+-- ---------------------------------------------------------------- Attendance (> 30 min rule)
+-- A learner-day counts once, and only if a Zoom session lasted MORE than 30 minutes.
+Attended Learner Days =
+CALCULATE (
+    COUNTROWS ( SUMMARIZE ( FactAttendance, FactAttendance[LearnerKey], FactAttendance[Date] ) ),
+    FactAttendance[DurationMinutes] > 30
+)                                                          -- 6,585
+
+-- Denominator: for each cohort-track, its learners x ITS OWN class days, then summed.
+-- Cohorts with different timetables are therefore each measured against their own schedule.
+Scheduled Learner Days =
+SUMX (
+    VALUES ( DimLearner[CohortTrackKey] ),
+    CALCULATE ( [Total Learners] * [Class Days] )
+)                                                          -- 7,000 (100 x 50 + 40 x 50)
+
+Attendance Rate =
+DIVIDE ( [Attended Learner Days], [Scheduled Learner Days] )   -- 94.1% (Power BI 100%, AWS 79.25%)
+
+Average Attendance Rate per Learner =
+AVERAGEX ( VALUES ( DimLearner[LearnerKey] ), [Attendance Rate] )   -- 94.1%
+
+-- Hours only count qualifying (> 30 min) sessions: the brief applies the 30-minute rule
+-- to ALL attendance calculations.
+Class Hours =
+DIVIDE ( CALCULATE ( SUM ( FactAttendance[DurationMinutes] ), FactAttendance[DurationMinutes] > 30 ), 60 )
+                                                           -- 10,565.7 h
+
+Average Class Hours per Learner =
+DIVIDE ( [Class Hours], [Total Learners] )                  -- 75.5 h
+
+
+-- ---------------------------------------------------------------- Participation
+-- Only rows matched to a roster learner count (unmatched names are kept for audit only).
+Participation Days =
+CALCULATE (
+    COUNTROWS ( SUMMARIZE ( FactParticipation, FactParticipation[LearnerKey], FactParticipation[Date] ) ),
+    FactParticipation[NameMatched] = 1
+)                                                          -- 6,037
+
+Participation Rate =
+DIVIDE ( [Participation Days], [Scheduled Learner Days] )   -- 86.2%
+
+Average Participation Rate per Learner =
+AVERAGEX ( VALUES ( DimLearner[LearnerKey] ), [Participation Rate] )   -- 86.2% (Power BI 85.1%, AWS 89.2%)
+
+Unmatched Participation Names =
+CALCULATE ( COUNTROWS ( FactParticipation ), FactParticipation[NameMatched] = 0 )   -- 0 (data-quality check)
+
+
+-- ---------------------------------------------------------------- Assessments (0–100)
+Average Assessment Score =
+AVERAGE ( FactAssessment[Score] )                           -- 50.8
+
+Average Lab Score =
+CALCULATE ( [Average Assessment Score], FactAssessment[AssessmentType] = "Lab" )    -- 50.1
+
+Average Quiz Score =
+CALCULATE ( [Average Assessment Score], FactAssessment[AssessmentType] = "Quiz" )   -- 51.5
+
+-- "Completed" lab = a recorded score above 0. A 0 is treated as not submitted
+-- (no pass mark was supplied; see data_dictionary.md for the assumption).
+Labs Completed =
+CALCULATE (
+    COUNTROWS ( FactAssessment ),
+    FactAssessment[AssessmentType] = "Lab",
+    FactAssessment[IsCompleted] = 1
+)                                                          -- 1,383 of 1,400
+
+Average Labs Completed per Learner =
+DIVIDE ( [Labs Completed], [Total Learners] )               -- 9.88
+
+
+-- ---------------------------------------------------------------- Outcomes
+Total Graduations =
+CALCULATE ( [Total Learners], DimLearner[GraduationStatus] = "Graduate" )      -- 119
+
+Total Certifications =
+CALCULATE ( [Total Learners], DimLearner[CertificationStatus] = "Certified" )  -- 92
+
+-- Dropout = ALL THREE conditions at once (mentor clarification):
+--   Non Graduate  AND  Not Certified  AND  incomplete attendance
+--   (attended fewer class days, under the > 30-minute rule, than were scheduled).
+Total Dropouts =
+CALCULATE (
+    [Total Learners],
+    DimLearner[GraduationStatus] = "Non Graduate",
+    DimLearner[CertificationStatus] = "Not Certified",
+    DimLearner[HasIncompleteAttendance] = 1
+)                                                          -- 7 (all AWS Cloud)
+
+Graduation Rate    = DIVIDE ( [Total Graduations], [Total Learners] )      -- 85.0%
+Certification Rate = DIVIDE ( [Total Certifications], [Total Learners] )   -- 65.7%
+Dropout Rate       = DIVIDE ( [Total Dropouts], [Total Learners] )         -- 5.0%
+
+Incomplete Attendance Learners =
+CALCULATE ( [Total Learners], DimLearner[HasIncompleteAttendance] = 1 )    -- 40
+
+
+-- ---------------------------------------------------------------- Learner-table aliases
+-- Kept so reports built on the earlier version keep working; they simply point at the fixed measures.
+Learner Attendance %     = [Attendance Rate]
+Learner Participation %  = [Average Participation Rate per Learner]
+Learner Assessment Score = [Average Assessment Score]
+
+
+-- ---------------------------------------------------------------- Report helpers
+-- Dynamic subtitle for each page: shows what is currently filtered.
+Selection Summary =
+VAR Tracks =
+    IF ( ISFILTERED ( DimLearner[Track] ),
+         CONCATENATEX ( VALUES ( DimLearner[Track] ), DimLearner[Track], ", " ), "All tracks" )
+VAR Cohorts =
+    IF ( ISFILTERED ( DimLearner[Cohort] ),
+         "Cohort " & CONCATENATEX ( VALUES ( DimLearner[Cohort] ), DimLearner[Cohort], ", " ), "All cohorts" )
+RETURN
+    Cohorts & "  •  " & Tracks & "  •  " & FORMAT ( [Total Learners], "#,0" ) & " learners"
+
+-- Conditional-formatting helper for the learner table (field value -> font/background colour).
+Attendance Flag Colour =
+SWITCH (
+    TRUE (),
+    ISBLANK ( [Attendance Rate] ), BLANK (),
+    [Attendance Rate] < 0.75, "#C2410C",     -- at risk
+    [Attendance Rate] < 0.90, "#B45309",     -- watch
+    "#15803D"                                -- on track
+)
+
+-- Learner-table highlight for dropouts (background + font, used as "Field value" formatting).
+Dropout Background =
+IF ( SELECTEDVALUE ( DimLearner[DropoutStatus] ) = "Dropout", "#FEE2E2" )
+
+Dropout Font Colour =
+IF ( SELECTEDVALUE ( DimLearner[DropoutStatus] ) = "Dropout", "#B91C1C" )
