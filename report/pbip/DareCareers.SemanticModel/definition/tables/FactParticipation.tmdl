@@ -1,0 +1,132 @@
+table FactParticipation
+	lineageTag: 9567587c-66d0-5b3d-bb28-888e3d80ddf9
+
+	column LearnerKey
+		dataType: string
+		isHidden
+		lineageTag: 6e84185b-95a2-5a57-9cb7-4bb5fc0233b4
+		summarizeBy: none
+		sourceColumn: LearnerKey
+
+		annotation SummarizationSetBy = User
+
+	column Email
+		dataType: string
+		isHidden
+		lineageTag: cfc92766-5c31-581d-9f7e-c9021dbbff76
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = User
+
+	column ParticipantName
+		dataType: string
+		lineageTag: 1e61cb05-f5b7-53b4-8652-02fb0929320b
+		summarizeBy: none
+		sourceColumn: ParticipantName
+
+		annotation SummarizationSetBy = User
+
+	column Track
+		dataType: string
+		isHidden
+		lineageTag: 046b7b95-2f7d-566c-a86e-7bdada75d3ba
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = User
+
+	column Cohort
+		dataType: string
+		isHidden
+		lineageTag: 63a89ee3-20b1-59fd-a846-79f039abae7c
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = User
+
+	column CertificationType
+		dataType: string
+		isHidden
+		lineageTag: 0fc7fc19-fd7f-5293-a8b1-16b03fbdf33c
+		summarizeBy: none
+		sourceColumn: CertificationType
+
+		annotation SummarizationSetBy = User
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 0c23be43-7d50-5a29-9339-273619ab9851
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Participated
+		dataType: int64
+		formatString: 0
+		lineageTag: 319679c0-287c-5a51-bc62-f83fe57c582a
+		summarizeBy: none
+		sourceColumn: Participated
+
+		annotation SummarizationSetBy = User
+
+	column NameMatched
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e8650cb-69df-53b3-bba1-b303048211df
+		summarizeBy: none
+		sourceColumn: NameMatched
+
+		annotation SummarizationSetBy = User
+
+	partition FactParticipation = m
+		mode: import
+		source =
+				// FactParticipation — one row per learner listed as participating on a class day.
+				// The source lists comma-separated display names (no e-mail), so names are matched to the
+				// roster through fnNormalizeName. Unmatched names are KEPT with NameMatched = 0 and a null
+				// LearnerKey so they can be audited instead of silently disappearing.
+				let
+				    PerTrack = Table.AddColumn(Tracks, "Rows", (t) =>
+				        let
+				            // roster lookup: normalised e-mail local part -> e-mail
+				            statusFile = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Status of Learners\"), each Text.Lower([Extension]) = ".xlsx"){0}[Content],
+				            statusSheet = Table.PromoteHeaders(Excel.Workbook(statusFile, null, true){0}[Data], [PromoteAllScalars = true]),
+				            emails = Table.TransformColumns(Table.SelectColumns(statusSheet, {"email"}), {{"email", each Text.Lower(Text.Trim(Text.From(_))), type text}}),
+				            lookup = Table.Buffer(Table.AddColumn(emails, "NameKey", each fnNormalizeName(Text.BeforeDelimiter([email], "@")), type text)),
+				            partFile = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Participation\"), each Text.Lower([Extension]) = ".xlsx"){0}[Content],
+				            partSheet = Table.PromoteHeaders(Excel.Workbook(partFile, null, true){0}[Data], [PromoteAllScalars = true]),
+				            base = Table.SelectColumns(partSheet, {"Date", "Participants"}),
+				            typedDate = Table.TransformColumns(base, {{"Date", each
+				                if _ is date then _
+				                else if _ is datetime then Date.From(_)
+				                else Date.FromText(Text.From(_), [Format = "dd-MMM-yyyy", Culture = "en-US"]), type date}}),
+				            names = Table.AddColumn(typedDate, "ParticipantName", each
+				                List.Select(List.Transform(Text.Split(if [Participants] = null then "" else Text.From([Participants]), ","), Text.Trim), (n) => n <> "")),
+				            oneRowPerName = Table.ExpandListColumn(Table.RemoveColumns(names, {"Participants"}), "ParticipantName"),
+				            withKey = Table.AddColumn(oneRowPerName, "NameKey", each fnNormalizeName([ParticipantName]), type text),
+				            // the same person listed twice on one day counts once
+				            deduped = Table.Distinct(withKey, {"Date", "NameKey"}),
+				            matched = Table.NestedJoin(deduped, {"NameKey"}, lookup, {"NameKey"}, "Match", JoinKind.LeftOuter),
+				            expanded = Table.ExpandTableColumn(matched, "Match", {"email"}, {"Email"}),
+				            withTrack = Table.AddColumn(expanded, "TrackInfo", each t, type record)
+				        in
+				            Table.ExpandRecordColumn(withTrack, "TrackInfo", {"Track", "Cohort", "CertificationType"})
+				    ),
+				    Combined = Table.Combine(PerTrack[Rows]),
+				    Matched = Table.AddColumn(Combined, "NameMatched", each if [Email] = null then 0 else 1, Int64.Type),
+				    Participated = Table.AddColumn(Matched, "Participated", each 1, Int64.Type),
+				    Key = Table.AddColumn(Participated, "LearnerKey", each if [Email] = null then null else [Cohort] & "|" & [Track] & "|" & [Email], type nullable text),
+				    Final = Table.SelectColumns(Key, {"LearnerKey", "Email", "ParticipantName", "Track", "Cohort", "CertificationType", "Date", "Participated", "NameMatched"}),
+				    Typed = Table.TransformColumnTypes(Final, {
+				        {"LearnerKey", type text}, {"Email", type text}, {"ParticipantName", type text}, {"Track", type text},
+				        {"Cohort", type text}, {"CertificationType", type text}, {"Date", type date},
+				        {"Participated", Int64.Type}, {"NameMatched", Int64.Type}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

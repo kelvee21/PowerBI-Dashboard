@@ -1,0 +1,134 @@
+expression pRootFolder = "C:\Workstation\Amalitech\PowerBI-Dashboard\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 2e4f9d2d-d5f2-5c0a-ada3-696539856a65
+
+	annotation PBI_ResultType = Text
+
+expression Tracks =
+		// Tracks — configuration table (right-click > untick "Enable load").
+		// One row per cohort x track. Folder is relative to data\raw\ and may include a cohort
+		// subfolder, e.g. "2025\Cloud Training". To add a future cohort or track, add a row here;
+		// LearnerKey (Cohort|Track|email) and ClassSchedule keep every cohort separate.
+		let
+		    Source = #table(
+		        type table [Folder = text, Track = text, CertificationType = text, Cohort = text],
+		        {
+		            {"PowerBI Training", "Power BI",  "Power BI", "2024"},
+		            {"Cloud Training",   "AWS Cloud", "AWS",      "2024"}
+		        }
+		    )
+		in
+		    Source
+	lineageTag: da046615-0a52-56f0-8013-9617e024a7e5
+
+	annotation PBI_ResultType = Table
+
+expression RawRoot =
+		// RawRoot — absolute path of data\raw\ built from the pRootFolder parameter
+		// (right-click > untick "Enable load").
+		// pRootFolder = the repository root, e.g. C:\Workstation\Amalitech\PowerBI-Dashboard\
+		// A missing trailing backslash is tolerated.
+		let
+		    Root = if Text.EndsWith(pRootFolder, "\") then pRootFolder else pRootFolder & "\",
+		    Raw = Root & "data\raw\"
+		in
+		    Raw
+	lineageTag: c9452ad2-541f-5015-9ad2-be538e0db545
+
+	annotation PBI_ResultType = Text
+
+expression fnNormalizeName =
+		// fnNormalizeName — letters-only, lower-case key used to match participation names
+		// ("Emily Johnson") to roster e-mail local parts ("emilyjohnson", "emily.johnson").
+		// Must stay identical to name_key() in etl/prepare_data.py.
+		(name as nullable text) as text =>
+		let
+		    lowered = if name = null then "" else Text.Lower(name),
+		    lettersOnly = Text.Select(lowered, {"a".."z"})
+		in
+		    lettersOnly
+	lineageTag: 6e208939-f04a-5626-b21e-89a4d764b0f0
+
+	annotation PBI_ResultType = Function
+
+expression stgRoster =
+		// stgRoster — STAGING (untick "Enable load"). Learner roster + outcomes from the
+		// "Status of Learners" workbooks. Kept separate so DimLearner only *references* queries
+		// (avoids the Formula.Firewall "rebuild this data combination" error).
+		let
+		    PerTrack = Table.AddColumn(Tracks, "Rows", (t) =>
+		        let
+		            file = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Status of Learners\"), each Text.Lower([Extension]) = ".xlsx"){0}[Content],
+		            sheet = Table.PromoteHeaders(Excel.Workbook(file, null, true){0}[Data], [PromoteAllScalars = true]),
+		            kept = Table.SelectColumns(sheet, {"email", "Graduation Status", "Certification Status"}, MissingField.UseNull),
+		            withTrack = Table.AddColumn(kept, "TrackInfo", each t, type record)
+		        in
+		            Table.ExpandRecordColumn(withTrack, "TrackInfo", {"Track", "Cohort", "CertificationType"})
+		    ),
+		    Roster = Table.Combine(PerTrack[Rows]),
+		    Renamed = Table.RenameColumns(Roster, {{"email", "Email"}, {"Graduation Status", "GraduationStatus"}, {"Certification Status", "CertificationStatus"}}),
+		    Clean = Table.TransformColumns(Renamed, {
+		        {"Email", each Text.Lower(Text.Trim(Text.From(_))), type text},
+		        {"GraduationStatus", each if _ = null then "" else Text.Trim(Text.From(_)), type text},
+		        {"CertificationStatus", each if _ = null then "" else Text.Trim(Text.From(_)), type text}}),
+		    NonBlank = Table.SelectRows(Clean, each [Email] <> ""),
+		    Key = Table.AddColumn(NonBlank, "LearnerKey", each [Cohort] & "|" & [Track] & "|" & [Email], type text)
+		in
+		    Key
+	lineageTag: a98aaad7-b52c-5a52-80b1-6edaff6a160f
+
+	annotation PBI_ResultType = Table
+
+expression stgZoomNames =
+		// stgZoomNames — STAGING (untick "Enable load"). LearnerKey -> display name from the Zoom
+		// exports. Needed because Power BI-track e-mails have no name separator (emilyjohnson@...).
+		let
+		    PerTrack = List.Transform(Table.ToRecords(Tracks), (t) =>
+		        let
+		            files = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Zoom Attendance\"), each Text.Lower([Extension]) = ".csv"),
+		            tables = List.Transform(files[Content], (c) =>
+		                Table.SelectColumns(
+		                    Table.PromoteHeaders(Csv.Document(c, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+		                    {"Name", "Email"})),
+		            combined = Table.Combine(tables),
+		            nonBlank = Table.SelectRows(combined, each [Email] <> null and Text.Trim([Email]) <> "")
+		        in
+		            Table.AddColumn(nonBlank, "LearnerKey", each t[Cohort] & "|" & t[Track] & "|" & Text.Lower(Text.Trim([Email])), type text)),
+		    Combined = Table.Combine(PerTrack),
+		    OnePerLearner = Table.Distinct(Table.SelectColumns(Combined, {"LearnerKey", "Name"}), {"LearnerKey"})
+		in
+		    OnePerLearner
+	lineageTag: 6692ea63-080d-549b-9183-49006ae2ac88
+
+	annotation PBI_ResultType = Table
+
+expression stgAssessment =
+		// stgAssessment — STAGING (untick "Enable load"). Labs & Quizzes sheets unpivoted from
+		// wide (Week 1 ... Week 10) to one row per learner x week x assessment type.
+		let
+		    PerTrack = Table.AddColumn(Tracks, "Rows", (t) =>
+		        let
+		            file = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Labs & Quizes\"), each Text.Lower([Extension]) = ".xlsx"){0}[Content],
+		            wb = Excel.Workbook(file, null, true),
+		            ReadSheet = (sheetName as text, assessmentType as text) as table =>
+		                let
+		                    sheet = Table.PromoteHeaders(Table.SelectRows(wb, each [Name] = sheetName){0}[Data], [PromoteAllScalars = true]),
+		                    unpivoted = Table.UnpivotOtherColumns(sheet, {"email"}, "WeekLabel", "Score"),
+		                    weeksOnly = Table.SelectRows(unpivoted, each Text.StartsWith([WeekLabel], "Week ")),
+		                    withType = Table.AddColumn(weeksOnly, "AssessmentType", each assessmentType, type text)
+		                in
+		                    withType,
+		            both = Table.Combine({ReadSheet("Labs", "Lab"), ReadSheet("Quizzes", "Quiz")}),
+		            withTrack = Table.AddColumn(both, "TrackInfo", each t, type record)
+		        in
+		            Table.ExpandRecordColumn(withTrack, "TrackInfo", {"Track", "Cohort", "CertificationType"})
+		    ),
+		    Combined = Table.Combine(PerTrack[Rows]),
+		    Email = Table.TransformColumns(Combined, {{"email", each Text.Lower(Text.Trim(Text.From(_))), type text}}),
+		    Renamed = Table.RenameColumns(Email, {{"email", "Email"}}),
+		    Week = Table.AddColumn(Renamed, "WeekNumber", each Number.From(Text.AfterDelimiter([WeekLabel], "Week ")), Int64.Type),
+		    Score = Table.TransformColumns(Week, {{"Score", each try Number.From(_) otherwise null, type nullable number}})
+		in
+		    Score
+	lineageTag: 5eb8697d-590e-5995-8b7d-6f13e9d0f493
+
+	annotation PBI_ResultType = Table

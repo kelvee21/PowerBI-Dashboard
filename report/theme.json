@@ -1,0 +1,78 @@
+{
+  "name": "Dare Careers | Learner Progress",
+  "dataColors": [
+    "#0F766E",
+    "#D97706",
+    "#2563EB",
+    "#DC2626",
+    "#64748B",
+    "#7C3AED",
+    "#0891B2",
+    "#65A30D"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#0F172A",
+  "tableAccent": "#0F766E",
+  "good": "#15803D",
+  "neutral": "#B45309",
+  "bad": "#C2410C",
+  "maximum": "#0F766E",
+  "center": "#5EEAD4",
+  "minimum": "#F0FDFA",
+  "textClasses": {
+    "callout": { "fontSize": 28, "fontFace": "Segoe UI Semibold", "color": "#0F172A" },
+    "title": { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#0F172A" },
+    "header": { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#0F172A" },
+    "label": { "fontSize": 10, "fontFace": "Segoe UI", "color": "#475569" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "show": true,
+            "fontSize": 12,
+            "fontFamily": "Segoe UI Semibold",
+            "fontColor": { "solid": { "color": "#0F172A" } }
+          }
+        ],
+        "background": [
+          { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
+        ],
+        "border": [
+          { "show": true, "color": { "solid": { "color": "#E2E8F0" } }, "radius": 8 }
+        ],
+        "dropShadow": [ { "show": false } ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [ { "color": { "solid": { "color": "#F1F5F9" } }, "transparency": 0 } ],
+        "outspace": [ { "color": { "solid": { "color": "#F1F5F9" } } } ]
+      }
+    },
+    "slicer": {
+      "*": {
+        "header": [ { "show": true, "fontColor": { "solid": { "color": "#334155" } }, "textSize": 10 } ],
+        "items": [ { "textSize": 10 } ]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [
+          {
+            "fontColor": { "solid": { "color": "#FFFFFF" } },
+            "backColor": { "solid": { "color": "#0F766E" } }
+          }
+        ],
+        "total": [ { "show": true } ]
+      }
+    },
+    "textbox": {
+      "*": {
+        "background": [ { "show": false } ],
+        "border": [ { "show": false } ]
+      }
+    }
+  }
+}

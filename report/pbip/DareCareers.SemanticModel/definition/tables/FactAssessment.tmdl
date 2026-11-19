@@ -1,0 +1,126 @@
+table FactAssessment
+	lineageTag: c3145c89-6f0b-5454-b061-d7df7382dbed
+
+	column LearnerKey
+		dataType: string
+		isHidden
+		lineageTag: 8a503ed6-554e-5793-927e-48ca74ad0be4
+		summarizeBy: none
+		sourceColumn: LearnerKey
+
+		annotation SummarizationSetBy = User
+
+	column Email
+		dataType: string
+		isHidden
+		lineageTag: 24cd74eb-e672-5671-b4b5-9fa6f36ad63f
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = User
+
+	column Track
+		dataType: string
+		isHidden
+		lineageTag: b4ac1522-2f58-5fa1-af5c-17cefea62765
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = User
+
+	column Cohort
+		dataType: string
+		isHidden
+		lineageTag: 5770d953-2bfa-594e-bffa-bba042764151
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = User
+
+	column CertificationType
+		dataType: string
+		isHidden
+		lineageTag: 960548b5-9542-5adf-813d-dcc37a4b4017
+		summarizeBy: none
+		sourceColumn: CertificationType
+
+		annotation SummarizationSetBy = User
+
+	column WeekNumber
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 814ec391-d651-5a8d-8457-82c947abba75
+		summarizeBy: none
+		sourceColumn: WeekNumber
+
+		annotation SummarizationSetBy = User
+
+	column AssessmentDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		isHidden
+		lineageTag: 2b829d81-5119-57ae-9e8b-4117d99d3597
+		summarizeBy: none
+		sourceColumn: AssessmentDate
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column AssessmentType
+		dataType: string
+		lineageTag: 4167f057-971d-55a4-995b-98ec557dea34
+		summarizeBy: none
+		sourceColumn: AssessmentType
+
+		annotation SummarizationSetBy = User
+
+	column Score
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 6ab6b90b-5b5a-50b2-b80b-15edf2fd75d5
+		summarizeBy: none
+		sourceColumn: Score
+
+		annotation SummarizationSetBy = User
+
+	column IsCompleted
+		dataType: int64
+		formatString: 0
+		lineageTag: e8d7253b-5e58-5aef-bfd4-517c6b7d9f1d
+		summarizeBy: none
+		sourceColumn: IsCompleted
+
+		annotation SummarizationSetBy = User
+
+	partition FactAssessment = m
+		mode: import
+		source =
+				// FactAssessment — one row per learner x programme week x assessment type (Lab / Quiz).
+				// AssessmentDate = last class day of that programme week FOR THAT COHORT AND TRACK, so the Month
+				// and Week slicers (DimDate) filter assessments exactly like attendance and participation, and a
+				// later cohort's "Week 1" gets its own dates.
+				// IsCompleted = 1 when a score above 0 was recorded (a 0 is treated as not submitted).
+				// References only (no direct file access): stgAssessment, ClassSchedule.
+				let
+				    Valid = Table.SelectRows(stgAssessment, each [WeekNumber] >= 1
+				                                             and ([Score] = null or ([Score] >= 0 and [Score] <= 100))),
+				    Completed = Table.AddColumn(Valid, "IsCompleted", each if [Score] <> null and [Score] > 0 then 1 else 0, Int64.Type),
+				    Key = Table.AddColumn(Completed, "LearnerKey", each [Cohort] & "|" & [Track] & "|" & [Email], type text),
+				    CohortTrack = Table.AddColumn(Key, "CohortTrackKey", each [Cohort] & "|" & [Track], type text),
+				    // (cohort-track, programme week) -> last class day of that week
+				    WeekEnd = Table.Group(ClassSchedule, {"CohortTrackKey", "ProgrammeWeek"},
+				                          {{"AssessmentDate", each List.Max([Date]), type date}}),
+				    WithDate = Table.ExpandTableColumn(
+				                   Table.NestedJoin(CohortTrack, {"CohortTrackKey", "WeekNumber"}, WeekEnd, {"CohortTrackKey", "ProgrammeWeek"}, "WE", JoinKind.LeftOuter),
+				                   "WE", {"AssessmentDate"}),
+				    Final = Table.SelectColumns(WithDate, {"LearnerKey", "Email", "Track", "Cohort", "CertificationType", "WeekNumber", "AssessmentDate", "AssessmentType", "Score", "IsCompleted"}),
+				    Typed = Table.TransformColumnTypes(Final, {
+				        {"LearnerKey", type text}, {"Email", type text}, {"Track", type text}, {"Cohort", type text},
+				        {"CertificationType", type text}, {"WeekNumber", Int64.Type}, {"AssessmentDate", type date},
+				        {"AssessmentType", type text}, {"Score", type number}, {"IsCompleted", Int64.Type}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

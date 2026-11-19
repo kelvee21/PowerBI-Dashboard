@@ -1,0 +1,81 @@
+table ClassSchedule
+	lineageTag: ddc10178-d4b6-5542-abac-516ad2d71283
+
+	column CohortTrackKey
+		dataType: string
+		isHidden
+		lineageTag: b98164be-e6c6-5638-83a8-94c774e6f0de
+		summarizeBy: none
+		sourceColumn: CohortTrackKey
+
+		annotation SummarizationSetBy = User
+
+	column Cohort
+		dataType: string
+		isHidden
+		lineageTag: c9dd3724-dbf3-5240-8ab9-68818a19b376
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = User
+
+	column Track
+		dataType: string
+		isHidden
+		lineageTag: 767982b9-7f86-5292-8e6c-4c2bd8383421
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = User
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		isHidden
+		lineageTag: dccf573e-a15d-5ed0-a122-ed55245c6cf2
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ProgrammeWeek
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 3d73f36f-dc37-5e00-a643-357b837a97ed
+		summarizeBy: none
+		sourceColumn: ProgrammeWeek
+
+		annotation SummarizationSetBy = User
+
+	partition ClassSchedule = m
+		mode: import
+		source =
+				// ClassSchedule — one row per cohort x track x class day (loaded; all columns hidden).
+				// The source of truth for "scheduled": every Zoom export file is one class day of that
+				// cohort-track, so each cohort keeps its own timetable.
+				// ProgrammeWeek counts from the Monday of that cohort-track's first class day, so a cohort that
+				// starts later still has its own Week 1.
+				let
+				    PerTrack = Table.AddColumn(Tracks, "Rows", (t) =>
+				        let
+				            files = Table.SelectRows(Folder.Files(RawRoot & t[Folder] & "\Zoom Attendance\"), each Text.Lower([Extension]) = ".csv"),
+				            dates = List.Distinct(List.Transform(files[Name], (n) =>
+				                Date.FromText(Text.BeforeDelimiter(n, "."), [Format = "dd-MMM-yyyy", Culture = "en-US"]))),
+				            week1Monday = Date.StartOfWeek(List.Min(dates), Day.Monday),
+				            asTable = Table.FromList(dates, Splitter.SplitByNothing(), type table [Date = date]),
+				            withWeek = Table.AddColumn(asTable, "ProgrammeWeek", each Number.IntegerDivide(Duration.Days([Date] - week1Monday), 7) + 1, Int64.Type)
+				        in
+				            withWeek),
+				    Expanded = Table.ExpandTableColumn(Table.SelectColumns(PerTrack, {"Cohort", "Track", "Rows"}), "Rows", {"Date", "ProgrammeWeek"}),
+				    Key = Table.AddColumn(Expanded, "CohortTrackKey", each [Cohort] & "|" & [Track], type text),
+				    Final = Table.SelectColumns(Key, {"CohortTrackKey", "Cohort", "Track", "Date", "ProgrammeWeek"}),
+				    Typed = Table.TransformColumnTypes(Final, {
+				        {"CohortTrackKey", type text}, {"Cohort", type text}, {"Track", type text},
+				        {"Date", type date}, {"ProgrammeWeek", Int64.Type}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,213 @@
+table DimLearner
+	lineageTag: 2a0185c5-a5c7-5623-82ac-0aabe77c9e86
+
+	column LearnerKey
+		dataType: string
+		isHidden
+		lineageTag: cb3376cc-07f1-57c5-982a-f82b0425e169
+		summarizeBy: none
+		sourceColumn: LearnerKey
+
+		annotation SummarizationSetBy = User
+
+	column LearnerName
+		dataType: string
+		lineageTag: 8a39b4d9-d3d3-5aec-90ae-a859aab0d817
+		summarizeBy: none
+		sourceColumn: LearnerName
+
+		annotation SummarizationSetBy = User
+
+	column Email
+		dataType: string
+		isHidden
+		lineageTag: 65eb4711-21a5-580e-bf17-828760096d3e
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = User
+
+	column Track
+		dataType: string
+		lineageTag: ac14db64-0a48-5ac3-9109-379e895a2123
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = User
+
+	column Cohort
+		dataType: string
+		lineageTag: 34db72e2-ad6b-5c30-ba86-8e7b9968caed
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = User
+
+	column CohortTrackKey
+		dataType: string
+		isHidden
+		lineageTag: 79ec1e81-43d6-5dd6-9156-d2edcb5ff5e7
+		summarizeBy: none
+		sourceColumn: CohortTrackKey
+
+		annotation SummarizationSetBy = User
+
+	column CertificationType
+		dataType: string
+		lineageTag: a7c7afd5-428b-59db-a108-6b611e4fc167
+		summarizeBy: none
+		sourceColumn: CertificationType
+
+		annotation SummarizationSetBy = User
+
+	column GraduationStatus
+		dataType: string
+		lineageTag: 58727d40-7659-50a1-b5b1-5531cb4f8b35
+		summarizeBy: none
+		sourceColumn: GraduationStatus
+
+		annotation SummarizationSetBy = User
+
+	column CertificationStatus
+		dataType: string
+		lineageTag: 70a19ad5-2242-5367-baa3-a663378f0345
+		summarizeBy: none
+		sourceColumn: CertificationStatus
+
+		annotation SummarizationSetBy = User
+
+	column ProgramStatus
+		dataType: string
+		lineageTag: eefb3982-61a7-5627-9899-49bddf9b25e0
+		summarizeBy: none
+		sourceColumn: ProgramStatus
+
+		annotation SummarizationSetBy = User
+
+	column AttendedClassDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 4677175b-b1cc-518d-a6be-5c4a78db2ae6
+		summarizeBy: none
+		sourceColumn: AttendedClassDays
+
+		annotation SummarizationSetBy = User
+
+	column ScheduledClassDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 0855364b-6379-5fa5-9391-bdb2d154fcc1
+		summarizeBy: none
+		sourceColumn: ScheduledClassDays
+
+		annotation SummarizationSetBy = User
+
+	column AttendanceCompletion
+		dataType: double
+		formatString: 0.0%
+		lineageTag: a23caec7-e74a-5e5e-9237-9a0aa8be5b73
+		summarizeBy: none
+		sourceColumn: AttendanceCompletion
+
+		annotation SummarizationSetBy = User
+
+	column LastAttendedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 68707b6b-e458-5fb3-992c-154923223447
+		summarizeBy: none
+		sourceColumn: LastAttendedDate
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column LastScheduledDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 28f70b81-6960-5124-a33f-92414a481301
+		summarizeBy: none
+		sourceColumn: LastScheduledDate
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column HasIncompleteAttendance
+		dataType: int64
+		formatString: 0
+		lineageTag: b413a535-fca2-5873-9cde-58e88d54c8cc
+		summarizeBy: none
+		sourceColumn: HasIncompleteAttendance
+
+		annotation SummarizationSetBy = User
+
+	column IsDropout
+		dataType: int64
+		formatString: 0
+		lineageTag: 2cf2ca42-bdf8-5750-83d7-b290374538bd
+		summarizeBy: none
+		sourceColumn: IsDropout
+
+		annotation SummarizationSetBy = User
+
+	column DropoutStatus
+		dataType: string
+		lineageTag: 9af2f088-a85c-58a5-bc38-38c50b050aeb
+		summarizeBy: none
+		sourceColumn: DropoutStatus
+
+		annotation SummarizationSetBy = User
+
+	partition DimLearner = m
+		mode: import
+		source =
+				// DimLearner — one row per learner enrolment (Cohort|Track|email), with outcome attributes.
+				// Outcomes are learner attributes (1:1 with the learner), so they live here rather than in a
+				// separate 1:1 "status" table: slicers on them then filter every fact through DimLearner.
+				// Dropout = Non Graduate AND Not Certified AND HasIncompleteAttendance (all three).
+				// Scheduled days come from ClassSchedule for the learner's own cohort and track, so cohorts with
+				// different timetables are each measured against their own class days.
+				// References only (no direct file access): stgRoster, stgZoomNames, FactAttendance, ClassSchedule.
+				let
+				    // ---- display name ---------------------------------------------------------------------
+				    WithName = Table.ExpandTableColumn(
+				        Table.NestedJoin(stgRoster, {"LearnerKey"}, stgZoomNames, {"LearnerKey"}, "Z", JoinKind.LeftOuter), "Z", {"Name"}, {"ZoomName"}),
+				    LearnerName = Table.AddColumn(WithName, "LearnerName", each
+				        if [ZoomName] <> null then Text.Trim([ZoomName])
+				        else Text.Proper(Text.Replace(Text.Replace(Text.BeforeDelimiter([Email], "@"), ".", " "), "_", " ")), type text),
+				    CohortTrack = Table.AddColumn(LearnerName, "CohortTrackKey", each [Cohort] & "|" & [Track], type text),
+				    // ---- attendance completeness (from FactAttendance, > 30 min rule already applied) ------
+				    AttendedRows = Table.SelectRows(FactAttendance, each [Attended] = 1),
+				    PerLearner = Table.Group(Table.Distinct(Table.SelectColumns(AttendedRows, {"LearnerKey", "Date"})), {"LearnerKey"}, {
+				        {"AttendedClassDays", each Table.RowCount(_), Int64.Type},
+				        {"LastAttendedDate", each List.Max([Date]), type date}}),
+				    PerCohortTrack = Table.Group(ClassSchedule, {"CohortTrackKey"}, {
+				        {"ScheduledClassDays", each Table.RowCount(_), Int64.Type},
+				        {"LastScheduledDate", each List.Max([Date]), type date}}),
+				    J1 = Table.ExpandTableColumn(Table.NestedJoin(CohortTrack, {"LearnerKey"}, PerLearner, {"LearnerKey"}, "A", JoinKind.LeftOuter), "A", {"AttendedClassDays", "LastAttendedDate"}),
+				    J2 = Table.ExpandTableColumn(Table.NestedJoin(J1, {"CohortTrackKey"}, PerCohortTrack, {"CohortTrackKey"}, "S", JoinKind.LeftOuter), "S", {"ScheduledClassDays", "LastScheduledDate"}),
+				    NoNullDays = Table.ReplaceValue(J2, null, 0, Replacer.ReplaceValue, {"AttendedClassDays"}),   // never attended -> 0 days
+				    // ---- business rules ---------------------------------------------------------------------
+				    Completion = Table.AddColumn(NoNullDays, "AttendanceCompletion", each Number.Round([AttendedClassDays] / [ScheduledClassDays], 4), type number),
+				    Incomplete = Table.AddColumn(Completion, "HasIncompleteAttendance", each if [AttendedClassDays] < [ScheduledClassDays] then 1 else 0, Int64.Type),
+				    Dropout = Table.AddColumn(Incomplete, "IsDropout", each
+				        if [GraduationStatus] = "Non Graduate" and [CertificationStatus] = "Not Certified" and [HasIncompleteAttendance] = 1 then 1 else 0, Int64.Type),
+				    DropoutLabel = Table.AddColumn(Dropout, "DropoutStatus", each if [IsDropout] = 1 then "Dropout" else "Not Dropout", type text),
+				    Program = Table.AddColumn(DropoutLabel, "ProgramStatus", each if [GraduationStatus] = "" then "Ongoing" else "Completed", type text),
+				    Final = Table.SelectColumns(Program, {
+				        "LearnerKey", "LearnerName", "Email", "Track", "Cohort", "CohortTrackKey", "CertificationType",
+				        "GraduationStatus", "CertificationStatus", "ProgramStatus",
+				        "AttendedClassDays", "ScheduledClassDays", "AttendanceCompletion", "LastAttendedDate", "LastScheduledDate",
+				        "HasIncompleteAttendance", "IsDropout", "DropoutStatus"}),
+				    Typed = Table.TransformColumnTypes(Final, {
+				        {"LearnerKey", type text}, {"LearnerName", type text}, {"Email", type text}, {"Track", type text},
+				        {"Cohort", type text}, {"CohortTrackKey", type text}, {"CertificationType", type text}, {"GraduationStatus", type text},
+				        {"CertificationStatus", type text}, {"ProgramStatus", type text},
+				        {"AttendedClassDays", Int64.Type}, {"ScheduledClassDays", Int64.Type}, {"AttendanceCompletion", type number},
+				        {"LastAttendedDate", type date}, {"LastScheduledDate", type date},
+				        {"HasIncompleteAttendance", Int64.Type}, {"IsDropout", Int64.Type}, {"DropoutStatus", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

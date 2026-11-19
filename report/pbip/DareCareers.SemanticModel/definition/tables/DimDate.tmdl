@@ -1,0 +1,139 @@
+table DimDate
+	dataCategory: Time
+	lineageTag: d6802f16-79c4-5fc2-9ab5-7999d4b3f4ef
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		isKey
+		lineageTag: d93d989f-9490-57a6-a798-c6a0a9dc6cca
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 99bb9248-5202-52b5-8dac-afa09ba25627
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+	column MonthNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: a51fbfde-6528-5fee-be4f-c85c49f73ff3
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+		annotation SummarizationSetBy = User
+
+	column MonthName
+		dataType: string
+		lineageTag: d72c14b1-cf28-5117-8917-91ed9075bc44
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+		annotation SummarizationSetBy = User
+
+	column MonthYear
+		dataType: string
+		lineageTag: 4441cdd2-972e-596f-a96d-ab0ba54bd30d
+		summarizeBy: none
+		sourceColumn: MonthYear
+		sortByColumn: MonthYearSort
+
+		annotation SummarizationSetBy = User
+
+	column MonthYearSort
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 46efddf4-359d-5030-9139-7746e8a690a6
+		summarizeBy: none
+		sourceColumn: MonthYearSort
+
+		annotation SummarizationSetBy = User
+
+	column WeekNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: b19d39c4-173f-510a-8b94-eb52ac498936
+		summarizeBy: none
+		sourceColumn: WeekNumber
+
+		annotation SummarizationSetBy = User
+
+	column WeekLabel
+		dataType: string
+		lineageTag: 00b60591-5d08-5706-a4a5-7b2b724c7b55
+		summarizeBy: none
+		sourceColumn: WeekLabel
+		sortByColumn: WeekNumber
+
+		annotation SummarizationSetBy = User
+
+	column IsClassDay
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f455403-bc28-5d2e-9548-1169a95e8068
+		summarizeBy: none
+		sourceColumn: IsClassDay
+
+		annotation SummarizationSetBy = User
+
+	column DayName
+		dataType: string
+		lineageTag: 860643b1-2af2-5f1d-85b9-98a64090d94a
+		summarizeBy: none
+		sourceColumn: DayName
+		sortByColumn: DayOfWeek
+
+		annotation SummarizationSetBy = User
+
+	column DayOfWeek
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 4127b106-cb0a-59fb-8234-4752b3c69c4c
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+
+		annotation SummarizationSetBy = User
+
+	partition DimDate = m
+		mode: import
+		source =
+				// DimDate — one row per calendar day from the first to the last class day of ANY cohort
+				// (contiguous, so it can be marked as the date table). Weekends are included with IsClassDay = 0.
+				// WeekNumber counts weeks from the Monday of the first class day in the data. With one cohort it
+				// equals the programme week ("Week N" source folders). Each cohort's own programme week is
+				// ClassSchedule[ProgrammeWeek] and FactAssessment[WeekNumber].
+				// References only (no direct file access): ClassSchedule.
+				let
+				    ClassDates = List.Buffer(List.Distinct(ClassSchedule[Date])),
+				    FirstDay = List.Min(ClassDates),
+				    LastDay = List.Max(ClassDates),
+				    Week1Monday = Date.StartOfWeek(FirstDay, Day.Monday),
+				    Calendar = Table.FromList(
+				        List.Dates(FirstDay, Duration.Days(LastDay - FirstDay) + 1, #duration(1, 0, 0, 0)),
+				        Splitter.SplitByNothing(), type table [Date = date]),
+				    AddYear = Table.AddColumn(Calendar, "Year", each Date.Year([Date]), Int64.Type),
+				    AddMonthNo = Table.AddColumn(AddYear, "MonthNumber", each Date.Month([Date]), Int64.Type),
+				    AddMonth = Table.AddColumn(AddMonthNo, "MonthName", each Date.MonthName([Date], "en-US"), type text),
+				    AddMonthYear = Table.AddColumn(AddMonth, "MonthYear", each Date.ToText([Date], [Format = "MMM yyyy", Culture = "en-US"]), type text),
+				    AddMonthSort = Table.AddColumn(AddMonthYear, "MonthYearSort", each [Year] * 100 + [MonthNumber], Int64.Type),
+				    AddWeek = Table.AddColumn(AddMonthSort, "WeekNumber", each Number.IntegerDivide(Duration.Days([Date] - Week1Monday), 7) + 1, Int64.Type),
+				    AddWeekLabel = Table.AddColumn(AddWeek, "WeekLabel", each "Week " & Text.From([WeekNumber]), type text),
+				    AddClassDay = Table.AddColumn(AddWeekLabel, "IsClassDay", each if List.Contains(ClassDates, [Date]) then 1 else 0, Int64.Type),
+				    AddDayName = Table.AddColumn(AddClassDay, "DayName", each Date.DayOfWeekName([Date], "en-US"), type text),
+				    AddDayNo = Table.AddColumn(AddDayName, "DayOfWeek", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type)
+				in
+				    AddDayNo
+
+	annotation PBI_ResultType = Table

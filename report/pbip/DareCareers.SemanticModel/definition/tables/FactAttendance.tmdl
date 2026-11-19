@@ -1,0 +1,135 @@
+table FactAttendance
+	lineageTag: 30201395-bac1-586d-89dd-94eb95996e9a
+
+	column LearnerKey
+		dataType: string
+		isHidden
+		lineageTag: b376b451-c8be-5dfc-adfe-b4d1bd91c58f
+		summarizeBy: none
+		sourceColumn: LearnerKey
+
+		annotation SummarizationSetBy = User
+
+	column Email
+		dataType: string
+		isHidden
+		lineageTag: 5dcde164-9645-5a77-a419-cf6c1d53433c
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = User
+
+	column Track
+		dataType: string
+		isHidden
+		lineageTag: 84277f66-b249-5111-b7bb-6fc758e6b34d
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = User
+
+	column Cohort
+		dataType: string
+		isHidden
+		lineageTag: 3581064e-087d-596d-82c2-17dd2d5d89c3
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = User
+
+	column CertificationType
+		dataType: string
+		isHidden
+		lineageTag: 1f96784f-2292-57b2-b87b-70b1c15ff57d
+		summarizeBy: none
+		sourceColumn: CertificationType
+
+		annotation SummarizationSetBy = User
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 5a3a5a24-226c-5326-bf61-733c0dab87f0
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DurationMinutes
+		dataType: double
+		formatString: #,0.0
+		lineageTag: a4df59af-579c-5156-b91d-aaf7ef5a7193
+		summarizeBy: sum
+		sourceColumn: DurationMinutes
+
+		annotation SummarizationSetBy = User
+
+	column Attended
+		dataType: int64
+		formatString: 0
+		lineageTag: a4228c98-91e1-5189-8b06-f0086ffe72a2
+		summarizeBy: none
+		sourceColumn: Attended
+
+		annotation SummarizationSetBy = User
+
+	column Role
+		dataType: string
+		lineageTag: 4ca63aa0-5ab1-5d67-a9b6-bdc9ddabe28c
+		summarizeBy: none
+		sourceColumn: Role
+
+		annotation SummarizationSetBy = User
+
+	partition FactAttendance = m
+		mode: import
+		source =
+				// FactAttendance — one row per Zoom participant session (here: one per learner per class day).
+				// Rule: Attended = 1 only when DurationMinutes > 30 (strict; exactly 30 is NOT attended).
+				let
+				    PerTrack = Table.AddColumn(Tracks, "Rows", (t) =>
+				        let
+				            files = Folder.Files(RawRoot & t[Folder] & "\Zoom Attendance\"),
+				            csvs = Table.SelectRows(files, each Text.Lower([Extension]) = ".csv"),
+				            perFile = Table.AddColumn(csvs, "Data", (f) =>
+				                let
+				                    // file name = class date, e.g. 05-Aug-2024.csv
+				                    sessionDate = Date.FromText(Text.BeforeDelimiter(f[Name], "."), [Format = "dd-MMM-yyyy", Culture = "en-US"]),
+				                    csv = Csv.Document(f[Content], [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    promoted = Table.PromoteHeaders(csv, [PromoteAllScalars = true]),
+				                    kept = Table.SelectColumns(promoted, {"Email", "Duration", "Role"}, MissingField.UseNull)
+				                in
+				                    Table.AddColumn(kept, "Date", each sessionDate, type date)
+				            ),
+				            combined = Table.Combine(perFile[Data]),
+				            withTrack = Table.AddColumn(combined, "TrackInfo", each t, type record)
+				        in
+				            Table.ExpandRecordColumn(withTrack, "TrackInfo", {"Track", "Cohort", "CertificationType"})
+				    ),
+				    Combined = Table.Combine(PerTrack[Rows]),
+				    CleanEmail = Table.TransformColumns(Combined, {{"Email", each if _ = null then null else Text.Lower(Text.Trim(Text.From(_))), type nullable text}}),
+				    NonBlank = Table.SelectRows(CleanEmail, each [Email] <> null and [Email] <> ""),
+				    // Two encodings: Power BI exports h:mm:ss, AWS Cloud exports numeric minutes.
+				    // The format is detected from the value itself rather than assumed from the folder.
+				    // A blank or unreadable duration becomes 0 minutes (never attended) instead of a row error.
+				    Minutes = Table.AddColumn(NonBlank, "DurationMinutes", each
+				        let d = Text.Trim(if [Duration] = null then "" else Text.From([Duration]))
+				        in  try Number.Round(
+				                    if Text.Contains(d, ":")
+				                    then Duration.TotalMinutes(Duration.FromText(d))
+				                    else Number.From(d, "en-US"), 2)
+				            otherwise 0,
+				        type number),
+				    Attended = Table.AddColumn(Minutes, "Attended", each if [DurationMinutes] > 30 then 1 else 0, Int64.Type),
+				    Key = Table.AddColumn(Attended, "LearnerKey", each [Cohort] & "|" & [Track] & "|" & [Email], type text),
+				    Final = Table.SelectColumns(Key, {"LearnerKey", "Email", "Track", "Cohort", "CertificationType", "Date", "DurationMinutes", "Attended", "Role"}),
+				    Typed = Table.TransformColumnTypes(Final, {
+				        {"LearnerKey", type text}, {"Email", type text}, {"Track", type text}, {"Cohort", type text},
+				        {"CertificationType", type text}, {"Date", type date}, {"DurationMinutes", type number},
+				        {"Attended", Int64.Type}, {"Role", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

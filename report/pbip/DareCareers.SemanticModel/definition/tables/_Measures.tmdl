@@ -1,0 +1,214 @@
+table _Measures
+	lineageTag: 0af415fb-e094-5b82-b135-7d91a4608dac
+
+	measure 'Total Learners' = COUNTROWS ( DimLearner )
+		formatString: #,0
+		displayFolder: Outcomes
+		lineageTag: 1f46772d-9646-5389-9af1-d357b34d532a
+
+	measure 'Class Days' =
+			CALCULATE (
+			    DISTINCTCOUNT ( ClassSchedule[Date] ),
+			    TREATAS ( VALUES ( DimLearner[CohortTrackKey] ), ClassSchedule[CohortTrackKey] )
+			)                                                          -- 50 (weekends are NOT class days)
+		formatString: #,0
+		displayFolder: Attendance
+		lineageTag: c9a3411f-5aeb-5fe2-84b5-45f0b81788d4
+
+	measure 'Attended Learner Days' =
+			CALCULATE (
+			    COUNTROWS ( SUMMARIZE ( FactAttendance, FactAttendance[LearnerKey], FactAttendance[Date] ) ),
+			    FactAttendance[DurationMinutes] > 30
+			)                                                          -- 6,585
+		formatString: #,0
+		displayFolder: Attendance
+		lineageTag: ad90b5c0-18f0-51c2-ab95-c0d4f7f06dba
+
+	measure 'Scheduled Learner Days' =
+			SUMX (
+			    VALUES ( DimLearner[CohortTrackKey] ),
+			    CALCULATE ( [Total Learners] * [Class Days] )
+			)                                                          -- 7,000 (100 x 50 + 40 x 50)
+		formatString: #,0
+		displayFolder: Attendance
+		lineageTag: fe6971c9-b5c7-57f8-9b65-afc1d4bf81e5
+
+	measure 'Attendance Rate' = DIVIDE ( [Attended Learner Days], [Scheduled Learner Days] )
+		formatString: 0.0%
+		displayFolder: Attendance
+		lineageTag: 17b7e49f-d43c-571d-b85f-9bebdd3e35f0
+
+	measure 'Average Attendance Rate per Learner' = AVERAGEX ( VALUES ( DimLearner[LearnerKey] ), [Attendance Rate] )
+		formatString: 0.0%
+		displayFolder: Attendance
+		lineageTag: f7af0fc4-f863-5511-9039-3cdb22aeefce
+
+	measure 'Class Hours' = DIVIDE ( CALCULATE ( SUM ( FactAttendance[DurationMinutes] ), FactAttendance[DurationMinutes] > 30 ), 60 )
+		formatString: #,0.0
+		displayFolder: Attendance
+		lineageTag: 74f4c03f-7aac-5d87-b3fc-56d3579649d3
+
+	measure 'Average Class Hours per Learner' = DIVIDE ( [Class Hours], [Total Learners] )
+		formatString: #,0.0
+		displayFolder: Attendance
+		lineageTag: 87e506e4-1131-5686-a38b-4b3d823f7eb2
+
+	measure 'Participation Days' =
+			CALCULATE (
+			    COUNTROWS ( SUMMARIZE ( FactParticipation, FactParticipation[LearnerKey], FactParticipation[Date] ) ),
+			    FactParticipation[NameMatched] = 1
+			)                                                          -- 6,037
+		formatString: #,0
+		displayFolder: Participation
+		lineageTag: f5155e63-d27c-5e85-a68c-543e675a59a8
+
+	measure 'Participation Rate' = DIVIDE ( [Participation Days], [Scheduled Learner Days] )
+		formatString: 0.0%
+		displayFolder: Participation
+		lineageTag: d42224ea-be40-5853-9e75-e07d771d3976
+
+	measure 'Average Participation Rate per Learner' = AVERAGEX ( VALUES ( DimLearner[LearnerKey] ), [Participation Rate] )
+		formatString: 0.0%
+		displayFolder: Participation
+		lineageTag: b18b0530-6577-554a-93a3-4320cb0b5883
+
+	measure 'Unmatched Participation Names' = CALCULATE ( COUNTROWS ( FactParticipation ), FactParticipation[NameMatched] = 0 )
+		formatString: #,0
+		displayFolder: Participation
+		lineageTag: 4d181698-f27f-5cb4-8ee0-a8624dd1e4dd
+
+	measure 'Average Assessment Score' = AVERAGE ( FactAssessment[Score] )
+		formatString: #,0.0
+		displayFolder: Assessment
+		lineageTag: 52459402-11f2-5f3b-8d33-c5c85af96d34
+
+	measure 'Average Lab Score' = CALCULATE ( [Average Assessment Score], FactAssessment[AssessmentType] = "Lab" )
+		formatString: #,0.0
+		displayFolder: Assessment
+		lineageTag: 8de9c3eb-b535-5c93-b5e3-70d387524ea7
+
+	measure 'Average Quiz Score' = CALCULATE ( [Average Assessment Score], FactAssessment[AssessmentType] = "Quiz" )
+		formatString: #,0.0
+		displayFolder: Assessment
+		lineageTag: ae3cf317-b147-55c6-a3c8-36143dc1ef42
+
+	measure 'Labs Completed' =
+			CALCULATE (
+			    COUNTROWS ( FactAssessment ),
+			    FactAssessment[AssessmentType] = "Lab",
+			    FactAssessment[IsCompleted] = 1
+			)                                                          -- 1,383 of 1,400
+		formatString: #,0
+		displayFolder: Assessment
+		lineageTag: 02af9971-249c-594d-b271-e08d5d4b3da1
+
+	measure 'Average Labs Completed per Learner' = DIVIDE ( [Labs Completed], [Total Learners] )
+		formatString: #,0.00
+		displayFolder: Assessment
+		lineageTag: 62a68e1f-45b2-5186-856a-feedcc4908c4
+
+	measure 'Total Graduations' = CALCULATE ( [Total Learners], DimLearner[GraduationStatus] = "Graduate" )
+		formatString: #,0
+		displayFolder: Outcomes
+		lineageTag: ab143369-a92b-5f40-80cc-bdf639b6e736
+
+	measure 'Total Certifications' = CALCULATE ( [Total Learners], DimLearner[CertificationStatus] = "Certified" )
+		formatString: #,0
+		displayFolder: Outcomes
+		lineageTag: 0cec252c-235b-5676-910f-b41eb3a8b569
+
+	measure 'Total Dropouts' =
+			CALCULATE (
+			    [Total Learners],
+			    DimLearner[GraduationStatus] = "Non Graduate",
+			    DimLearner[CertificationStatus] = "Not Certified",
+			    DimLearner[HasIncompleteAttendance] = 1
+			)                                                          -- 7 (all AWS Cloud)
+		formatString: #,0
+		displayFolder: Outcomes
+		lineageTag: 9f4bab67-0183-571d-a1f2-fe1c094090f6
+
+	measure 'Graduation Rate' = DIVIDE ( [Total Graduations], [Total Learners] )
+		formatString: 0.0%
+		displayFolder: Outcomes
+		lineageTag: cd8532a0-539c-548b-ad1c-46d8cec437ec
+
+	measure 'Certification Rate' = DIVIDE ( [Total Certifications], [Total Learners] )
+		formatString: 0.0%
+		displayFolder: Outcomes
+		lineageTag: 155ebbc5-f2c4-5afd-8858-88ac292288dc
+
+	measure 'Dropout Rate' = DIVIDE ( [Total Dropouts], [Total Learners] )
+		formatString: 0.0%
+		displayFolder: Outcomes
+		lineageTag: 677f135c-663b-5bb5-8dec-1d5e5d5ca129
+
+	measure 'Incomplete Attendance Learners' = CALCULATE ( [Total Learners], DimLearner[HasIncompleteAttendance] = 1 )
+		formatString: #,0
+		displayFolder: Outcomes
+		lineageTag: 72c8d913-a4e4-54b2-856e-c5537444910a
+
+	measure 'Learner Attendance %' = [Attendance Rate]
+		formatString: 0.0%
+		displayFolder: Helpers
+		lineageTag: 69829187-83db-517a-b78e-ba53bd55ae43
+
+	measure 'Learner Participation %' = [Average Participation Rate per Learner]
+		formatString: 0.0%
+		displayFolder: Helpers
+		lineageTag: cb3d3f19-9cca-577d-babb-cd34eae724fa
+
+	measure 'Learner Assessment Score' = [Average Assessment Score]
+		formatString: #,0.0
+		displayFolder: Helpers
+		lineageTag: 7d1cdefa-3977-554a-b1d2-b73076e8d2e4
+
+	measure 'Selection Summary' =
+			VAR Tracks =
+			    IF ( ISFILTERED ( DimLearner[Track] ),
+			         CONCATENATEX ( VALUES ( DimLearner[Track] ), DimLearner[Track], ", " ), "All tracks" )
+			VAR Cohorts =
+			    IF ( ISFILTERED ( DimLearner[Cohort] ),
+			         "Cohort " & CONCATENATEX ( VALUES ( DimLearner[Cohort] ), DimLearner[Cohort], ", " ), "All cohorts" )
+			RETURN
+			    Cohorts & "  •  " & Tracks & "  •  " & FORMAT ( [Total Learners], "#,0" ) & " learners"
+		displayFolder: Helpers
+		lineageTag: 39420046-a78e-5db0-9d94-f4f6ddbfcd2b
+
+	measure 'Attendance Flag Colour' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( [Attendance Rate] ), BLANK (),
+			    [Attendance Rate] < 0.75, "#C2410C",     -- at risk
+			    [Attendance Rate] < 0.90, "#B45309",     -- watch
+			    "#15803D"                                -- on track
+			)
+		displayFolder: Helpers
+		lineageTag: 0693ef1f-0ece-50cd-ad5d-81f6356b15fc
+
+	measure 'Dropout Background' = IF ( SELECTEDVALUE ( DimLearner[DropoutStatus] ) = "Dropout", "#FEE2E2" )
+		displayFolder: Helpers
+		lineageTag: db63811a-4fc5-5f92-824d-f45fa6dfb56f
+
+	measure 'Dropout Font Colour' = IF ( SELECTEDVALUE ( DimLearner[DropoutStatus] ) = "Dropout", "#B91C1C" )
+		displayFolder: Helpers
+		lineageTag: cf268d80-4492-5226-92e9-522bf1baed40
+
+	column Column1
+		dataType: string
+		isHidden
+		lineageTag: 80ba1bf8-c2ef-58b1-b3a5-fdb22fa51ae4
+		summarizeBy: none
+		sourceColumn: Column1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Column1 = text], {})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

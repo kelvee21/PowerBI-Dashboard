@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 1,
+        "y": 116
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 852.25645963885859,
+            "y": 314.32671568993021
+          },
+          "nodeIndex": "_Measures",
+          "nodeLineageTag": "0af415fb-e094-5b82-b135-7d91a4608dac",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50.023980672658865,
+            "y": 509.37444458613641
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "d6802f16-79c4-5fc2-9ab5-7999d4b3f4ef",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 592.26178520459052,
+            "y": 0
+          },
+          "nodeIndex": "DimLearner",
+          "nodeLineageTag": "2a0185c5-a5c7-5623-82ac-0aabe77c9e86",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 56.477730151399555
+          },
+          "nodeIndex": "FactAssessment",
+          "nodeLineageTag": "c3145c89-6f0b-5454-b061-d7df7382dbed",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 334.1460594465135,
+            "y": 300.11460332149255
+          },
+          "nodeIndex": "FactAttendance",
+          "nodeLineageTag": "30201395-bac1-586d-89dd-94eb95996e9a",
+          "size": {
+            "height": 313,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 593.25645963885836,
+            "y": 598.65343137986042
+          },
+          "nodeIndex": "FactParticipation",
+          "nodeLineageTag": "9567587c-66d0-5b3d-bb28-888e3d80ddf9",
+          "size": {
+            "height": 315,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}
