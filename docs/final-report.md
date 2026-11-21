@@ -4,9 +4,7 @@
 | --- | --- |
 | **Project** | Dare Careers: Learner Progress & Performance dashboard (Power BI lab) |
 | **Author** | Fabrice Sheja |
-| **Version / date** | 1.0 · November 2026 |
-| **Status** | Final, submitted for review |
-| **Tools** | Power BI Desktop 2.159 (Oct 2026), Power Query (M), DAX, PBIP project; Python 3.13 + pandas for cross-checking |
+| **Tools** | Power BI Desktop 2.159 (Oct 2026), Power Query (M), DAX, PBIP project; Python 3.13 + pandas for verification |
 
 ## 1. Executive summary
 
@@ -14,9 +12,9 @@ This lab required a two-page Power BI report on one learner cohort (2024) and it
 **Power BI** (100 learners) and **AWS Cloud** (40). The sources are 106 raw files in four formats,
 and they share no learner ID. I loaded them with Power Query, reshaped each source to its natural
 grain and applied the business rules from the brief and the mentor clarifications during
-preparation. The result is a star-schema semantic model with 31 DAX measures. I also wrote a Python
-ETL that builds the same tables and stops on 11 data-quality checks, and I used it to cross-check
-the Power Query output.
+preparation. The result is a star-schema semantic model with 31 DAX measures. Power Query is the
+transformation engine. To verify it, I wrote a separate Python script that rebuilds the same tables
+from the raw files and runs 11 data-quality checks, then compared its results with the model.
 
 | Graduation | Certification | Dropout | Attendance (> 30 min) | Participation | Avg score |
 | --- | --- | --- | --- | --- | --- |
@@ -55,7 +53,7 @@ All raw files are stored unchanged in `data/raw/`, with one folder per track.
 ![Figure 1: Pipeline from raw files to report pages](img/pipeline.svg)
 
 _Figure 1. Data flow. Each arrow means that the query on the right reads the source or query on
-the left. Option B (dashed) is the Python cross-check._
+the left. The dashed box is the Python verification script, which is not part of the load path._
 
 The pipeline has five layers:
 
@@ -181,7 +179,7 @@ and 4 show the page layout with the values from a full refresh and no slicer sel
 
 A further check confirms that each class day's computed week matches its `Week N` folder.
 
-**Reconciliation.** Power Query (inside Power BI) and the Python ETL produce identical tables and
+**Reconciliation.** The Power Query model and the verification script produce identical tables and
 measure values:
 
 | Check | Expected | Result |
@@ -217,7 +215,7 @@ cohort means adding one row to `Tracks` plus its folder, then refreshing.
 | Power BI report (2 pages) | `report/DareCareers_Learner_Progress_Performance.pbix`, `report/pbip/` (project format) |
 | Power Query transformations (12 queries) | `powerquery/*.m` |
 | DAX measures (31) | `model/measures.dax` |
-| Python ETL, validation and curated tables | `etl/prepare_data.py`, `data/curated/*.csv` |
+| Verification script and its reference tables | `etl/prepare_data.py`, `data/curated/*.csv` |
 | Theme | `report/theme.json` |
 | This report (PDF) | `report/Final-Report.pdf` |
-| Supporting documentation | `docs/`: [walkthrough](transformation-walkthrough.md), [data dictionary](data-dictionary.md), [model overview](model-overview.md), [report spec](report-spec.md), [issues and fixes](issues-and-fixes.md), [build guide](build-guide.md) |
+| Supporting documentation | `docs/`: [data dictionary](data-dictionary.md), [report spec](report-spec.md), [mentor clarifications](reviewer-clarifications.md) |

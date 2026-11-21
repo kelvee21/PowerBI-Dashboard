@@ -17,27 +17,13 @@ A Power BI dashboard that tracks attendance, participation, lab/quiz scores and 
 ```text
 data/
   raw/                 source exports, never edited (PowerBI Training/, Cloud Training/)
-  curated/             model tables written by etl/prepare_data.py
-etl/prepare_data.py    Python ETL with 11 validation checks (Option B)
-powerquery/            Power Query M queries that build the model from data/raw (Option A)
+  curated/             reference tables written by the verification script
+etl/prepare_data.py    verification only: rebuilds the tables independently, 11 checks
+powerquery/            Power Query M queries: the transformation engine of the model
 model/measures.dax     every DAX measure, with expected values
 report/                theme.json, the .pbix, pbip/ (the Power BI project) and Final-Report.pdf
-docs/
-  lab-brief.md                   the assignment
-  build-guide.md                 step-by-step build, polish checklist, change log
-  issues-and-fixes.md            issues found and how each was fixed
-  update-existing-report.md      click-by-click update + data reload of the existing PBIX
-  transformation-walkthrough.md  every step from raw files to report pages, with checks + demo script
-  data-dictionary.md             tables, columns, business rules, expected values
-  report-spec.md                 requirement → visual traceability + acceptance checklist
-  model-overview.md              star schema and design decisions
-  dimensional-modeling-guide.md  grain, facts vs dimensions, method
-  final-report.md                final report: pipeline, model, report pages, checks (PDF: report/Final-Report.pdf)
-  img/                           report figures (pipeline, semantic model, page layouts)
-  reviewer-clarifications.md     mentor clarifications and how they are met
-index.html             the build guide as a browsable page (generated, see below)
-fixes.html, update.html, walkthrough.html, report.html  more docs as browsable pages (generated)
-tools/build_site.py    regenerates the HTML guides from the Markdown
+docs/                  lab brief, mentor clarifications, data dictionary, report spec, final report, figures (img/)
+report.html            local browsable final report, generated from docs/final-report.md (not tracked)
 tools/build_pbip.py    regenerates the project's semantic model from powerquery/ and model/measures.dax
 exercises/             unrelated practice CSVs
 ```
@@ -46,12 +32,13 @@ exercises/             unrelated practice CSVs
 
 ```bash
 pip install pandas openpyxl markdown
-python etl/prepare_data.py     # rebuild data/curated (expects "validation checks passed: 11")
-python tools/build_site.py     # rebuild index.html after editing docs/build-guide.md
+python etl/prepare_data.py     # verify: rebuild reference tables, run checks ("validation checks passed: 11")
+python tools/build_site.py     # rebuild local HTML pages from docs (outputs are not tracked)
 ```
 
-Then follow [docs/build-guide.md](docs/build-guide.md) in Power BI Desktop (2.159, October 2026 or
-later). Load the data with Power Query (`powerquery/`) or from `data/curated/`.
+Open `report/pbip/DareCareers.pbip` in Power BI Desktop (2.159, October 2026 or later) and refresh.
+The data is loaded and transformed with Power Query (`powerquery/`); compare the
+refreshed model with the expected values from `etl/prepare_data.py`.
 
 ## Business rules
 

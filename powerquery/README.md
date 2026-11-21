@@ -1,7 +1,8 @@
-# Power Query (Option A — load straight from the raw files)
+# Power Query: the transformation engine
 
-These `.m` files build the whole model inside Power BI from `data/raw/`. They produce exactly the
-same tables as `etl/prepare_data.py` (Option B), which writes `data/curated/*.csv`.
+These `.m` files load and transform the whole model inside Power BI from `data/raw/`. The Python
+script `etl/prepare_data.py` is used only to verify them: it rebuilds the same tables independently
+(written to `data/curated/*.csv`) so the refreshed model can be compared against them.
 
 ## 1. Parameter
 

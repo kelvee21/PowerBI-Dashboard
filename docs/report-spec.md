@@ -1,7 +1,7 @@
 # Report specification and requirement traceability
 
 Every line of the [lab brief](lab-brief.md) and of the mentor clarification maps to a visual, field
-or rule below. Layout and formatting steps are in the [build guide](build-guide.md).
+or rule below.
 
 ## Page 1: Overall Performance
 

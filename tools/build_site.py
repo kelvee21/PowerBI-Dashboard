@@ -1,8 +1,9 @@
-"""Render the Markdown guides as standalone, browsable HTML pages.
+"""Render Markdown docs as standalone, browsable HTML pages.
 
     python tools/build_site.py
 
-docs/build-guide.md  -> index.html   (and the other guides listed in PAGES)
+Generates HTML pages for entries in PAGES whose source Markdown exists. Generated
+HTML outputs are local/not tracked when listed in .gitignore.
 
 Optional local-only pages can be listed in an untracked `local-pages.json` (same keys as PAGES,
 paths relative to the repo root). Public pages never link to them.

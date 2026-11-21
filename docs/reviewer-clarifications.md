@@ -3,8 +3,7 @@
 > **Status (21 Nov 2026):** the first fix round below is history. The way it implemented
 > "truncated attendance" turned out to be wrong, so a second review changed it. File paths in this
 > section are the old ones (`powerbi/...`). The current rules are in
-> [data-dictionary.md](data-dictionary.md) and the full list of defects is in
-> [build-guide.md §9](build-guide.md#9-what-changed-from-the-earlier-version-and-why-know-this-for-the-defence).
+> [data-dictionary.md](data-dictionary.md).
 
 
 ## Context
