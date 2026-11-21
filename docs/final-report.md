@@ -14,7 +14,8 @@ and they share no learner ID. I loaded them with Power Query, reshaped each sour
 grain and applied the business rules from the brief and the mentor clarifications during
 preparation. The result is a star-schema semantic model with 31 DAX measures. Power Query is the
 transformation engine. To verify it, I wrote a separate Python script that rebuilds the same tables
-from the raw files and runs 11 data-quality checks, then compared its results with the model.
+from the raw files and runs 11 data-quality checks, then reconciled its results with the model
+(§8).
 
 | Graduation | Certification | Dropout | Attendance (> 30 min) | Participation | Avg score |
 | --- | --- | --- | --- | --- | --- |
@@ -152,70 +153,88 @@ listed with its expected value in `model/measures.dax`.
 
 ![Figure 3: Page 1, Overall Performance](img/page1-overall-performance.svg)
 
-_Figure 3. Page 1, Overall Performance: "How is the cohort doing?" Four KPI cards and six track
-comparisons on fixed 0–100% axes, so small differences are not exaggerated._
+_Figure 3. Page 1, Overall Performance: four KPI cards and six charts comparing the tracks._
 
 ![Figure 4: Page 2, Learner Insights](img/page2-learner-insights.svg)
 
-_Figure 4. Page 2, Learner Insights: "Who needs support?" Six KPI cards and a learner table
-sorted by attendance, with red/amber attendance colours and dropout rows highlighted. Figures 3
-and 4 show the page layout with the values from a full refresh and no slicer selected._
+_Figure 4. Page 2, Learner Insights: six KPI cards and a learner table sorted by attendance
+(red under 75%, amber under 90%; dropouts highlighted)._
 
-- **Slicers.** Cohort, Track, Certification Type and Learner Status are synced across both pages.
-  Month, Week and Program Status apply to page 2 only. No slicer uses a column from a fact table.
-- **Design.** A custom theme (`report/theme.json`), the same grid on both pages, a short caption
-  that states the business rules, and tooltips with the learner count.
+Slicers for Cohort, Track, Certification Type and Learner Status are synced across both pages.
+Month, Week and Program Status are on page 2 only.
 
-## 8. Data quality, validation and reconciliation
+## 8. Validation and reconciliation
 
-**Automated checks.** `etl/prepare_data.py` stops with an error unless all 11 checks pass:
+### Why a separate Python script
 
-- unique `LearnerKey` and `Date`;
-- no attendance or assessment rows for unknown learners;
-- scores between 0 and 100;
-- unique grain in the assessment, participation and schedule tables;
-- every learner has a class schedule and every assessment has a date;
-- every fact date exists in `DimDate`.
+Power Query has no built-in tests. A wrong step, such as a bad join or the wrong denominator, still
+refreshes without an error, and the report simply shows a wrong number. For example, dividing
+attended days by all 68 calendar days instead of the 50 class days gives an attendance rate of
+69.2% instead of 94.1%, and nothing in Power BI flags it.
 
-A further check confirms that each class day's computed week matches its `Week N` folder.
+So I wrote `etl/prepare_data.py` as an independent second implementation. It reads the same raw
+files with pandas, applies the same rules and builds the same tables. It is not used to load the
+report. It serves two purposes:
 
-**Reconciliation.** The Power Query model and the verification script produce identical tables and
-measure values:
+1. **Data-quality checks.** The script stops with an error if any of the checks below fails, so
+   bad source data is caught before it reaches the report.
+2. **Reconciliation.** Two implementations in different tools give the same totals only if the
+   logic is right in both. I compared every figure below with the refreshed Power BI model.
 
-| Check | Expected | Result |
+### Data-quality checklist
+
+| # | Check | Why it matters |
 | --- | --- | --- |
-| Rows: DimLearner / DimDate / ClassSchedule | 140 / 68 / 100 | ✔ |
-| Rows: FactAttendance / FactParticipation / FactAssessment | 7,000 (140 × 50) / 6,037 / 2,800 (140 × 10 × 2) | ✔ |
-| Unmatched participation names | 0 | ✔ |
-| Attendance rate: all / Power BI / AWS Cloud | 94.1% / 100% / 79.25% | ✔ |
-| Total dropouts; Learner Status = Not Certified → learners | 7; 48 | ✔ |
-| Oct 2024 filter: class days, attendance | 9; 94.0% | ✔ |
+| 1 | `LearnerKey` is unique in `DimLearner` | A duplicate learner would be counted twice and break the one-to-many relationship |
+| 2 | `Date` is unique in `DimDate` | Required for the date table and its relationships |
+| 3 | Every attendance row belongs to a known learner | Orphan rows would appear as a blank learner and skew rates |
+| 4 | Every assessment row belongs to a known learner | Same as above, for scores |
+| 5 | Every score is between 0 and 100 | Catches data-entry errors in the lab and quiz sheets |
+| 6 | One row per learner × week × Lab/Quiz | Duplicates would distort average scores |
+| 7 | One participation row per learner per day | A name listed twice must not raise the participation rate |
+| 8 | Every learner has a class schedule | Without it the attendance denominator would be blank |
+| 9 | Every assessment has a date | Undated scores would disappear when the Month or Week slicer is used |
+| 10 | One schedule row per cohort-track per day | A duplicate day would inflate the scheduled class days |
+| 11 | Every fact date exists in `DimDate` | Rows outside the calendar would vanish when filtering by date |
+| + | Each class day's computed week matches its `Week N` folder | Confirms that the dates parsed from the file names are correct |
 
-**Personal data.** E-mail addresses are hidden in the model; the report shows names only.
+Result: all 11 checks pass, and so does the week check (`validation checks passed: 11`).
 
-**Scalability test.** A second cohort was simulated (a 2025 AWS Cloud cohort that reuses the same
-e-mail addresses), producing 180 learners. Keys stayed unique, each cohort-track was measured
-against its own 50 class days, and the 2025 assessments were dated from February 2025. Adding a real
-cohort means adding one row to `Tracks` plus its folder, then refreshing.
+### Reconciliation: Power BI model vs Python script
 
-## 9. Limitations and next steps
+| Area | Check | Expected (script) | Power BI | Match |
+| --- | --- | --- | --- | --- |
+| Row counts | DimLearner / DimDate / ClassSchedule | 140 / 68 / 100 | 140 / 68 / 100 | ✔ |
+| Row counts | FactAttendance / FactParticipation / FactAssessment | 7,000 / 6,037 / 2,800 | 7,000 / 6,037 / 2,800 | ✔ |
+| Learners | Total (Power BI / AWS Cloud) | 140 (100 / 40) | 140 (100 / 40) | ✔ |
+| Outcomes | Graduations / certifications / dropouts | 119 / 92 / 7 | 119 / 92 / 7 | ✔ |
+| Attendance | Attendance rate (Power BI / AWS Cloud) | 94.1% (100% / 79.25%) | 94.1% (100% / 79.25%) | ✔ |
+| Participation | Participation rate (Power BI / AWS Cloud) | 86.2% (85.1% / 89.2%) | 86.2% (85.1% / 89.2%) | ✔ |
+| Assessment | Average score (Lab / Quiz) | 50.8 (50.1 / 51.5) | 50.8 (50.1 / 51.5) | ✔ |
+| Assessment | Labs completed / class hours | 1,383 / 10,565.7 | 1,383 / 10,565.7 | ✔ |
+| Matching | Unmatched participation names | 0 | 0 | ✔ |
+| Filter test | Learner Status = Not Certified → learners | 48 | 48 | ✔ |
+| Filter test | Track = AWS Cloud → dropout rate | 17.5% | 17.5% | ✔ |
+| Filter test | Month = Oct 2024 → class days, attendance | 9, 94.0% | 9, 94.0% | ✔ |
 
-| Limitation | Impact | Recommendation |
-| --- | --- | --- |
-| Participation is matched by name, not ID | Matching could fail on name changes (0 failures today; failures are kept and flagged) | Add e-mail or learner ID to the participation log |
-| "Lab completed = score > 0" | 17 zero scores count as not done | Ask the programme for a pass mark or a submission flag |
-| `DimDate` week numbers count from the first class day in the data | With overlapping cohorts, Week 1 is not each cohort's own Week 1 | Use the Week slicer together with the Cohort slicer |
-| Program Status is always _Completed_ | The slicer has one value today | It works once an in-progress cohort is loaded |
-| Local-file sources | A manual refresh is needed | Move `data/raw` to SharePoint and publish with scheduled refresh |
+**How to repeat it:** run `python etl/prepare_data.py`, refresh the report in Power BI Desktop,
+and compare the cards and charts with the Expected column. The expected value of every measure is
+also written next to it in `model/measures.dax`.
 
-## 10. Deliverables
+**Future cohorts.** I re-ran the script with a simulated 2025 cohort added. All checks passed,
+keys stayed unique, and each cohort was measured against its own class days.
+
+E-mail addresses are hidden in the report; only learner names are shown.
+
+## 9. Deliverables
 
 | Deliverable | Location |
 | --- | --- |
 | Power BI report (2 pages) | `report/DareCareers_Learner_Progress_Performance.pbix`, `report/pbip/` (project format) |
+| Report theme | `report/theme.json` |
+| Final report (this document) | `report/Final-Report.pdf` |
+| Raw source data | `data/raw/` |
 | Power Query transformations (12 queries) | `powerquery/*.m` |
 | DAX measures (31) | `model/measures.dax` |
 | Verification script and its reference tables | `etl/prepare_data.py`, `data/curated/*.csv` |
-| Theme | `report/theme.json` |
-| This report (PDF) | `report/Final-Report.pdf` |
-| Supporting documentation | `docs/`: [data dictionary](data-dictionary.md), [report spec](report-spec.md), [mentor clarifications](reviewer-clarifications.md) |
+| Data dictionary, requirement mapping, mentor clarifications | `docs/data-dictionary.md`, `docs/report-spec.md`, `docs/reviewer-clarifications.md` |
